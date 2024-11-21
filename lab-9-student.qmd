@@ -1,6 +1,6 @@
 ---
 title: "Lab 9: Data Simulation Exploration"
-author: "Your name here!"
+author: "Zack Kramer"
 format: html
 editor: source
 embed-resources: true
@@ -9,6 +9,7 @@ embed-resources: true
 ```{r}
 #| label: setup
 
+library(tidyverse)
 
 ```
 
