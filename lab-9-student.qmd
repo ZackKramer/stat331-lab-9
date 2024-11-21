@@ -107,7 +107,7 @@ enframe(results,
   labs(x = "# Babies Correctly Returned",
        y = "",
        title = "Proportion of simulations where 0, 1, 2, 3, and 4 babies were returned correctly") + 
-  theme_bw()
+  
 
 ```
 
@@ -141,8 +141,8 @@ I've provided some skeleton code to get you started. :)
 
 ```{r}
 simulate_means <- function(n, df){
-  map_dbl(.x = ___, 
-          .f = ~rchisq(n = 100, ___) %>% mean()
+  map_dbl(.x = n, 
+          .f = ~rchisq(n = 100, df) %>% mean()
           )
 }
 ```
@@ -153,7 +153,7 @@ simulate_means <- function(n, df){
 -  **`df` = 10**
 
 ```{r}
-grid <- crossing(n = ___, 
+grid <- crossing(n = c(10, 100, 1000, 10000), 
                  df = 5)
 ```
 
@@ -166,10 +166,10 @@ You will want to use the `unnest()` function to extract the results of the
 
 ```{r}
 all_simulations <- grid |> 
-  mutate(simulated_means = pmap(.l = list(___), 
+  mutate(simulated_means = pmap(.l = list(n, df), 
                                 .f = simulate_means)
          ) |> 
-  unnest(___) 
+  unnest(cols = simulated_means)
 
 ```
 
@@ -179,6 +179,10 @@ Hint: Make sure your columns have descriptive names!
 ```{r}
 #| label: table-of-simulated Means
 
+all_simulations |>
+  select("Number of means simulated" = n,
+         "Degrees of freedom" = df,
+         "Simulated Means" = simulated_means)
 
 ```
 
