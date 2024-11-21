@@ -35,11 +35,18 @@ for it to be compatible with `map_int()`!
 #| label: function-simulation-for-random-babies
 
 randomBabies <- function(nBabies){
-  ...
+  baby_data <- tibble(baby = 1:nBabies,
+                      returned = rbinom(n = nBabies, size = 1, prob = 1/nBabies))
+  
+  babies_found <- baby_data |>
+    filter(returned == 1) |>
+    nrow()
+  
+  return(babies_found)
 }
 
 results <- map_int(.x = 1:10000,
-                   .f = ___
+                   .f = ~ randomBabies(nBabies = 4)
                    )
 ```
 
@@ -64,6 +71,14 @@ enframe(results,
 ```{r}
 #| label: table-for-random-babies
 
+num_correct <- enframe(results, 
+        name = "simulation_number", 
+        value = "ncorrect") |>
+  count(ncorrect) |>
+  mutate(proportion = n/10000) |>
+  select("number returned correctly" = ncorrect, proportion)
+
+num_correct
 
 ```
 
@@ -83,6 +98,16 @@ geom_bar(mapping = aes(y = after_stat(count) / sum(after_stat(count))
 
 ```{r}
 #| label: visualization-for-random-babies
+
+enframe(results, 
+        name = "simulation_number", 
+        value = "ncorrect") |>
+  ggplot(mapping = aes(x = ncorrect)) +
+  geom_bar(mapping = aes(y = after_stat(count) / sum(after_stat(count)))) +
+  labs(x = "# Babies Correctly Returned",
+       y = "",
+       title = "Proportion of simulations where 0, 1, 2, 3, and 4 babies were returned correctly") + 
+  theme_bw()
 
 ```
 
