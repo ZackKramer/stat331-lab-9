@@ -107,6 +107,7 @@ enframe(results,
   labs(x = "# Babies Correctly Returned",
        y = "",
        title = "Proportion of simulations where 0, 1, 2, 3, and 4 babies were returned correctly") + 
+  theme_bw()
   
 
 ```
@@ -141,9 +142,10 @@ I've provided some skeleton code to get you started. :)
 
 ```{r}
 simulate_means <- function(n, df){
-  map_dbl(.x = n, 
+  tibble(sim = 1:n,
+         mean = map_dbl(.x = 1:n, 
           .f = ~rchisq(n = 100, df) %>% mean()
-          )
+          ))
 }
 ```
 
@@ -154,7 +156,7 @@ simulate_means <- function(n, df){
 
 ```{r}
 grid <- crossing(n = c(10, 100, 1000, 10000), 
-                 df = 5)
+                 df = 10)
 ```
 
 **6. Now, use a `p_map()` to create a new column of simulated means (using the `simulate_means()` function), for every value in your `grid`.**
@@ -180,9 +182,10 @@ Hint: Make sure your columns have descriptive names!
 #| label: table-of-simulated Means
 
 all_simulations |>
-  select("Number of means simulated" = n,
+  select("Number of simulations" = n,
          "Degrees of freedom" = df,
-         "Simulated Means" = simulated_means)
+         "Simulation #" = sim,
+         "Chi-Squared Mean" = mean)
 
 ```
 
@@ -196,6 +199,21 @@ sizes between the simulations.
 ```{r}
 #| label: plot-of-simulated Means
 
+all_simulations |>
+  mutate(n = as.character(n), 
+         n = fct_recode(n, 
+                        `10 Simulations` = "10", 
+                        `100 Simulations` = "100", 
+                        `1000 Simulations` = "1000", 
+                        `10000 Simulations` = "10000")) |> 
+  ggplot(mapping = aes(x = mean)) + 
+  geom_histogram() + 
+  facet_wrap(~ n, scales = "free_y") + 
+  labs(x = "Mean",
+       y = "", 
+       title = "Simulated Chi-Squared Means using Different Amounts of Simulations",
+       subtitle = "Frequency of Means") + 
+  theme_bw()
 
 ```
 
